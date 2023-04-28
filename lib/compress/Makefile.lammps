@@ -19,6 +19,6 @@
 
 # Settings that the LAMMPS build will import when this package is installed
 
-compress_SYSINC = # -DLAMMPS_ZSTD
-compress_SYSLIB = -lz # -lzstd
-compress_SYSPATH =
+compress_SYSINC =  -DLAMMPS_ZSTD -I/home/irsrvhome1/R17/barraude/.local/usr/include/
+compress_SYSLIB = -lz  -lzstd
+compress_SYSPATH = -L/home/irsrvhome1/R17/barraude/.local/usr/lib/
