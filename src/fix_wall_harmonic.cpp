@@ -28,16 +28,13 @@ FixWallHarmonic::FixWallHarmonic(LAMMPS *lmp, int narg, char **arg) : FixWall(lm
 /* ----------------------------------------------------------------------
    interaction of all particles in group with a wall
    m = index of wall coeffs
-   which = xlo,xhi,ylo,yhi,zlo,zhi (0,1,..,5)
+   which = xlo,xhi,ylo,yhi,zlo,zhi
    error if any particle is on or behind wall
-   dim = 0,1,2 (x,y,z)
-
 ------------------------------------------------------------------------- */
-/* NEW ONE */
 
 void FixWallHarmonic::wall_particle(int m, int which, double coord)
 {
-  double dr, fwall;
+  double delta, dr, fwall;
   double vn;
 
   double **x = atom->x;
@@ -45,22 +42,24 @@ void FixWallHarmonic::wall_particle(int m, int which, double coord)
   int *mask = atom->mask;
   int nlocal = atom->nlocal;
 
-  /* The dim is the int part, so if its zhi (which=5) then dim = 2 ==> Z coordinate */
   int dim = which / 2;
   int side = which % 2;
   if (side == 0) side = -1;
 
+  int onflag = 0;
+
   for (int i = 0; i < nlocal; i++)
     if (mask[i] & groupbit) {
       if (side < 0)
-        dr = coord - x[i][dim];
+        delta = x[i][dim] - coord;
       else
-        dr = x[i][dim] - coord;
-      if (dr >= cutoff[m]) continue;
-      if (dr <= 0.0) {
-        /* No force if the particle is inside the control volume */
+        delta = coord - x[i][dim];
+      if (delta >= cutoff[m]) continue;
+      if (delta <= 0.0) {
+        onflag = 1;
         continue;
       }
+      dr = cutoff[m] - delta;
       fwall = side * 2.0 * epsilon[m] * dr;
       f[i][dim] -= fwall;
       ewall[0] += epsilon[m] * dr * dr;
@@ -68,11 +67,12 @@ void FixWallHarmonic::wall_particle(int m, int which, double coord)
 
       if (evflag) {
         if (side < 0)
-          vn = -fwall * dr;
+          vn = -fwall * delta;
         else
-          vn = fwall * dr;
+          vn = fwall * delta;
         v_tally(dim, i, vn);
       }
     }
 
+  if (onflag) error->one(FLERR, "Particle on or inside fix wall surface");
 }

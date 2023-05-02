@@ -286,8 +286,10 @@ void FixWidom::init()
 
   // decide whether to switch to the full_energy option
   if (!full_flag) {
-    if ((force->pair == nullptr) ||
+    if ((force->kspace) ||
+        (force->pair == nullptr) ||
         (force->pair->single_enable == 0) ||
+        (force->pair_match("^hybrid",0)) ||
         (force->pair_match("^eam",0)) ||
         (force->pair->tail_flag)) {
       full_flag = true;
