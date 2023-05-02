@@ -12,7 +12,7 @@
 #SBATCH --gres=gpu:1
 
 module purge
-module load intel/2021a zstd/1.4.9 CUDA/11.3.1
+module load intel/2021a CUDA/11.3.1
 
 make clean-all
 make clean-machine
