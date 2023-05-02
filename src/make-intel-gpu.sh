@@ -7,12 +7,12 @@
 #SBATCH -e job.err
 #SBATCH -o job.out
 #SBATCH --wckey xfq39001
-#SBATCH --time=3-2:0:0
+#SBATCH --time=2:0:0
 #SBATCH -p gpgpu
 #SBATCH --gres=gpu:1
 
 module purge
-module load intel/2021a zstd/1.4.9 CUDA/11.3.1
+module load intel/2021a CUDA/11.3.1
 
 make clean-all
 make clean-machine
@@ -21,7 +21,7 @@ make no-INTEL
 make no-installed
 
 #make lib-gpu args="-m mpi -a sm_60 -p double -b"
-make lib-gpu args="-m mpi -a sm_60 -p mixed -b"
+make lib-gpu args="-m cuda_mps -a sm_60 -p mixed -b"
 make yes-KSPACE
 make yes-MANYBODY
 make yes-MC
@@ -41,3 +41,4 @@ make yes-INTEL
 # Go
 #make -j 8 icc_openmpi
 make -j 36 intel_cpu_intelmpi
+mv lmp_intel_cpu_intelmpi lmp_GPU
