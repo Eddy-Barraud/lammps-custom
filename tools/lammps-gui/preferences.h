@@ -17,6 +17,7 @@
 #include <QDialog>
 
 class QDialogButtonBox;
+class QFont;
 class QSettings;
 class QTabWidget;
 class LammpsWrapper;
@@ -30,6 +31,9 @@ public:
 
 private slots:
     void accept() override;
+
+public:
+    bool need_relaunch;
 
 private:
     QTabWidget *tabWidget;
@@ -48,9 +52,11 @@ public:
 
 private slots:
     void pluginpath();
-    void newtmpfolder();
+    void newallfont();
+    void newtextfont();
 
 private:
+    void updatefonts(const QFont &all, const QFont &text);
     QSettings *settings;
     LammpsWrapper *lammps;
 };
